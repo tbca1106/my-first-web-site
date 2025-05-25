@@ -29,7 +29,6 @@
       height: 100vh;
       background-color: var(--main-bg);
       color: var(--text-color);
-      overflow: hidden;
       flex-direction: column;
     }
 
@@ -79,6 +78,7 @@
       overflow-y: auto;
       padding: 20px;
       background-color: var(--message-bg);
+      transition: max-height 0.2s ease;
     }
 
     .message {
@@ -187,7 +187,7 @@
 </head>
 <body>
 
-  <!-- 모바일에서만 표시되는 사이드바 토글 버튼 -->
+  <!-- 모바일용 토글 버튼 -->
   <button id="toggle-sidebar">&gt; 학교 목록</button>
 
   <div id="sidebar">
@@ -249,7 +249,6 @@
       el.addEventListener('click', () => {
         currentRoom = el.textContent.trim();
         renderMessages();
-        // 모바일에서는 사이드바 자동 닫기
         if (window.innerWidth <= 600) {
           sidebar.classList.remove('show');
         }
@@ -258,6 +257,17 @@
 
     toggleSidebar.addEventListener('click', () => {
       sidebar.classList.toggle('show');
+    });
+
+    // 채팅 입력 시 메시지 영역 축소/복귀
+    input.addEventListener('focus', () => {
+      messages.style.maxHeight = '50vh';
+      messages.scrollTop = messages.scrollHeight;
+    });
+
+    input.addEventListener('blur', () => {
+      messages.style.maxHeight = '';
+      messages.scrollTop = messages.scrollHeight;
     });
 
     renderMessages();
