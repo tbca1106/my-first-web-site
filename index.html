@@ -17,6 +17,10 @@
       --name-color: #3366cc;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
@@ -26,6 +30,7 @@
       background-color: var(--main-bg);
       color: var(--text-color);
       overflow: hidden;
+      flex-direction: column;
     }
 
     #sidebar {
@@ -38,7 +43,7 @@
       top: 0;
       bottom: 0;
       overflow-y: auto;
-      z-index: 1;
+      z-index: 10;
     }
 
     #sidebar h2 {
@@ -62,11 +67,10 @@
     }
 
     #chat-area {
-      margin-left: 200px;
       flex: 1;
+      margin-left: 200px;
       display: flex;
       flex-direction: column;
-      background-color: var(--main-bg);
       height: 100vh;
     }
 
@@ -90,6 +94,9 @@
       display: flex;
       padding: 10px;
       background-color: var(--input-bg);
+      position: sticky;
+      bottom: 0;
+      z-index: 5;
     }
 
     #input {
@@ -119,12 +126,34 @@
 
     /* 모바일 반응형 */
     @media (max-width: 600px) {
+      body {
+        flex-direction: column;
+      }
+
       #sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
         display: none;
+        padding: 10px;
+      }
+
+      #sidebar.show {
+        display: block;
       }
 
       #chat-area {
         margin-left: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
       }
 
       #input {
@@ -136,10 +165,31 @@
         padding: 16px 20px;
         font-size: 1.2em;
       }
+
+      #toggle-sidebar {
+        display: block;
+        background-color: var(--sidebar-bg);
+        color: var(--text-color);
+        padding: 10px;
+        text-align: left;
+        font-size: 1.2em;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+      }
+    }
+
+    /* PC에서 토글버튼 숨김 */
+    #toggle-sidebar {
+      display: none;
     }
   </style>
 </head>
 <body>
+
+  <!-- 모바일에서만 표시되는 사이드바 토글 버튼 -->
+  <button id="toggle-sidebar">&gt; 학교 목록</button>
+
   <div id="sidebar">
     <h2>학교 목록</h2>
     <div class="school">철산중</div>
@@ -160,8 +210,10 @@
     const send = document.getElementById('send');
     const messages = document.getElementById('messages');
     const schools = document.querySelectorAll('.school');
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggle-sidebar');
 
-    let currentRoom = '철산중'; // 기본 채팅방
+    let currentRoom = '철산중';
     const roomMessages = {
       '철산중': [],
       '광명중': [],
@@ -197,10 +249,19 @@
       el.addEventListener('click', () => {
         currentRoom = el.textContent.trim();
         renderMessages();
+        // 모바일에서는 사이드바 자동 닫기
+        if (window.innerWidth <= 600) {
+          sidebar.classList.remove('show');
+        }
       });
+    });
+
+    toggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('show');
     });
 
     renderMessages();
   </script>
+
 </body>
 </html>
